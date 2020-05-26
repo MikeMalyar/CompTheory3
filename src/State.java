@@ -23,7 +23,7 @@ public class State {
     }
 
     public String getOutput(String res) {
-        return String.format(output, res);
+        return output != null ? String.format(output, res) + "\n" : "";
     }
 
     public State setOutput(String output) {

@@ -7,6 +7,8 @@ public class Lab3 {
     private static List<State> states;
     private static List<Character> symbols;
 
+    private static String res;
+
     public static void main(String[] args) {
         prepareData();
 
@@ -31,7 +33,7 @@ public class Lab3 {
                 int i = 0;
                 State currentState = states.get(0);
                 char sym;
-                String res = "";
+                res = "";
 
                 while (i <= str.length()) {
                     try {
@@ -45,26 +47,8 @@ public class Lab3 {
                         sym = (char) Character.UNASSIGNED;
                     }
                     ++i;
-                    final char finalSym = sym;
-                    int stateName = currentState.getName();
-                    try {
-                        int nextStateName = map.entrySet().stream().filter(simpleEntryStateEntry ->
-                                simpleEntryStateEntry.getKey().getKey().equals(stateName) &&
-                                        simpleEntryStateEntry.getKey().getValue().equals(finalSym)
-                        ).map(Map.Entry::getValue).findFirst().orElseThrow(() ->
-                                new IllegalStateException(String.format("State %s or symbol %s not found", stateName, finalSym)));
-                        State nextState = states.stream().filter(state -> state.getName() == nextStateName)
-                                .findFirst().orElseThrow(() ->
-                                        new IllegalStateException(String.format("State %s not found", nextStateName)));
-                        if (nextState.isFinal()) {
-                            writer.write(nextState.getOutput(res) + "\n");
-                            break;
-                        }
-                        currentState = nextState;
-                    } catch (IllegalStateException ex) {
-                        writer.write("<error>\n");
-                        break;
-                    }
+
+                    currentState = getNextState(currentState, sym, writer, false);
                 }
             }
 
@@ -74,6 +58,33 @@ public class Lab3 {
         }
 
 
+    }
+
+    private static State getNextState(State currentState, char sym, FileWriter writer, boolean recursed) {
+        try {
+            int stateName = currentState.getName();
+            int nextStateName = map.entrySet().stream().filter(simpleEntryStateEntry ->
+                    simpleEntryStateEntry.getKey().getKey().equals(stateName) &&
+                            simpleEntryStateEntry.getKey().getValue().equals(sym)
+            ).map(Map.Entry::getValue).findFirst().orElseThrow(() ->
+                    new IllegalStateException(String.format("State %s or symbol %s not found", stateName, sym)));
+            State nextState = states.stream().filter(state -> state.getName() == nextStateName)
+                    .findFirst().orElseThrow(() ->
+                            new IllegalStateException(String.format("State %s not found", nextStateName)));
+            if (nextState.isFinal()) {
+                writer.write(nextState.getOutput(res));
+                res = "";
+                currentState = states.get(0);
+                if (!recursed) {
+                    return getNextState(currentState, sym, writer, true);
+                }
+            } else {
+                currentState = nextState;
+            }
+        } catch (IllegalStateException | IOException ex) {
+            currentState = states.get(0);
+        }
+        return currentState;
     }
 
     /**
@@ -111,7 +122,7 @@ public class Lab3 {
                 new State().setName(-4).setFinal(true).setOutput("<identifier, %s>"),
                 new State().setName(-5).setFinal(true).setOutput("<keyword, read>"),
                 new State().setName(-6).setFinal(true).setOutput("<keyword, write>"),
-                new State().setName(-7).setFinal(true).setOutput("<other>")
+                new State().setName(-7).setFinal(true)
         ));
         symbols = new ArrayList<>(Arrays.asList(
                 'a', 'd', 'e', 'i', 'r', 't', 'w', '0', '1'

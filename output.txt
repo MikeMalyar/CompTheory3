@@ -1,10 +1,6 @@
 <keyword, read>
 <keyword, write>
-<identifier, rw>
-<identifier, r>
-<identifier, r1r>
-<identifier, r01>
-<identifier, rw1>
-<other>
-<other>
+<identifier, wr>
+<identifier, r1rr01rw11rre>
 <keyword, read>
+<keyword, write>

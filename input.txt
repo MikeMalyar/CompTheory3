@@ -1,10 +1,1 @@
-read
-write
-rw
-rf
-r1r
-r01
-rw1
-1r
-reap
-readwrite
+readwriterwrfr1rr01rw11rreapreadwrite
