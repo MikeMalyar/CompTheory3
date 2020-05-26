@@ -1,6 +1,6 @@
 <keyword, read>
 <keyword, write>
 <identifier, wr>
-<identifier, r1rr01rw11rre>
+<identifier, r1rr01rw11rr>
 <keyword, read>
 <keyword, write>

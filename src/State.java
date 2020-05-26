@@ -22,6 +22,10 @@ public class State {
         return this;
     }
 
+    public boolean hasOutput() {
+        return output != null;
+    }
+
     public String getOutput(String res) {
         return output != null ? String.format(output, res) + "\n" : "";
     }

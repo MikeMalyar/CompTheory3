@@ -38,10 +38,9 @@ public class Lab3 {
                 while (i <= str.length()) {
                     try {
                         sym = str.charAt(i);
+                        res += sym;
                         if (!symbols.contains(sym)) {
                             sym = (char) Character.UNASSIGNED;
-                        } else {
-                            res += sym;
                         }
                     } catch (StringIndexOutOfBoundsException endOfLine) {
                         sym = (char) Character.UNASSIGNED;
@@ -60,7 +59,7 @@ public class Lab3 {
 
     }
 
-    private static State getNextState(State currentState, char sym, FileWriter writer, boolean recursed) {
+    private static State getNextState(State currentState, char sym, FileWriter writer, boolean isRecursive) {
         try {
             int stateName = currentState.getName();
             int nextStateName = map.entrySet().stream().filter(simpleEntryStateEntry ->
@@ -72,10 +71,13 @@ public class Lab3 {
                     .findFirst().orElseThrow(() ->
                             new IllegalStateException(String.format("State %s not found", nextStateName)));
             if (nextState.isFinal()) {
-                writer.write(nextState.getOutput(res));
-                res = "";
                 currentState = states.get(0);
-                if (!recursed) {
+                if (nextState.hasOutput()) {
+                    writer.write(nextState.getOutput(res.substring(0, res.length() - 1)));
+                    res = res.substring(res.length() - 1);
+                    if (!symbols.contains(res.charAt(0))) {
+                        res = "";
+                    }
                     return getNextState(currentState, sym, writer, true);
                 }
             } else {
